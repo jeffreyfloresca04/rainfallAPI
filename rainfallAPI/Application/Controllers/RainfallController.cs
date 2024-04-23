@@ -27,8 +27,8 @@ namespace Rainfall.API.Application.Controllers
         [HttpGet("/rainfall/id/{stationId}/readings", Name ="station-reading")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ReadingByStationIdCommandResponse))]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ReadingByStationIdCommandResponse))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ReadingByStationIdCommandResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResult))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequestResult))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ReadingByStationIdCommandResponse))]
         public async Task<IActionResult> StationReading([FromRoute] string stationId, [FromQuery] int count = 10)
         {
@@ -43,9 +43,9 @@ namespace Rainfall.API.Application.Controllers
                 if (response != null && response.Success && response.readings.Any())
                     return Ok(response);
                 if (response != null && response.Success && !response.readings.Any())
-                    return NotFound(response);
+                    return NotFound();
 
-                return BadRequest(response);
+                return BadRequest();
             }
             catch(ValidationException vex)
             {

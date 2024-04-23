@@ -60,6 +60,9 @@ namespace Rainfall.API.Application.Station.Commands
                                 dateMeasured = x.dateTime,
                                 amountMeasured = x.value
                             }).ToList();
+                        }else if(result != null && !result.items.Any())
+                        {
+                            throw new CustomException((int)System.Net.HttpStatusCode.NotFound);
                         }
                     }
                 }
