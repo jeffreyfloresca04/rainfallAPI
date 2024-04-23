@@ -2,7 +2,7 @@
 ASP.NET Core Web API that exposes an endpoint to fetch the rainfall data per station
 
 ## Build and Run
-The web api can be build and run using Visual Studio 2022 (latest version)
+The web api can be build and run using Visual Studio 2022 (latest version) or via command line
 
 
 ## Dependencies
