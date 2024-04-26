@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Rainfall.API.Application.Common;
 using Rainfall.API.Application.Station.Commands;
+using Rainfall.API.Application.Station.Models;
 using System.Net.Mime;
 
 namespace Rainfall.API.Application.Controllers
@@ -23,52 +24,66 @@ namespace Rainfall.API.Application.Controllers
         /// </summary>
         /// <param name="stationId">The id of the reading station</param>
         /// <param name="count">The number of readings to return</param>
-        /// <returns></returns>
-        [HttpGet("/rainfall/id/{stationId}/readings", Name ="station-reading")]
+        /// <returns> Retrieve the latest readings for the specified stationId</returns>
+        [HttpGet("/rainfall/id/{stationId}/readings", Name ="get-rainfall")]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ReadingByStationIdCommandResponse))]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResult))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequestResult))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ReadingByStationIdCommandResponse))]
-        public async Task<IActionResult> StationReading([FromRoute] string stationId, [FromQuery] int count = 10)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RainfallReadingResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorResponse))]
+        public async Task<IActionResult> GetStationReading([FromRoute] string stationId, [FromQuery] int count = 10)
         {
             try
             {
-                var response = await _mediator.Send(new ReadingByStationIdCommand()
+                var response = await _mediator.Send(new RainfallReadingCommand()
                 {
                     StationId = stationId,
                     Count = count
                 });
 
-                if (response != null && response.Success && response.readings.Any())
+                if (response != null && response.Readings.Any())
                     return Ok(response);
-                if (response != null && response.Success && !response.readings.Any())
-                    return NotFound();
 
                 return BadRequest();
             }
             catch(ValidationException vex)
             {
-                return BadRequest(vex.Errors);
+                return BadRequest(new ErrorResponse
+                {
+                    Message = vex.Message,
+                    Detail = vex.Errors.Select(x => new ErrorDetail(x.PropertyName, x.ErrorMessage)).ToList()
+                });
             }
-            catch(CustomException ex)
+            catch(CustomException cex)
             {
-                switch (ex.code)
+                
+                switch (cex.ErrorCode)
                 {
                     case StatusCodes.Status500InternalServerError:
-                        return StatusCode(StatusCodes.Status500InternalServerError, ex);
-
+                        return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse
+                        {
+                            Message = cex.Message
+                        });
                     case StatusCodes.Status400BadRequest:
-                        return StatusCode(StatusCodes.Status400BadRequest, ex);
+                        return StatusCode(StatusCodes.Status400BadRequest, new ErrorResponse
+                        {
+                            Message = cex.Message
+                        });
 
                     case StatusCodes.Status404NotFound:
-                        return StatusCode(StatusCodes.Status404NotFound, ex);
+                        return StatusCode(StatusCodes.Status404NotFound, new ErrorResponse
+                        {
+                            Message = cex.Message
+                        });
                 }
-                return BadRequest(ex);
+                return BadRequest(cex);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse
+                {
+                    Message = ex.Message
+                });
             }
         }
     }

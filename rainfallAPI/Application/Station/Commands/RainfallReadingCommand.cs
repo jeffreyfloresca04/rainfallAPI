@@ -2,7 +2,7 @@
 
 namespace Rainfall.API.Application.Station.Commands
 {
-    public class ReadingByStationIdCommand : IRequest<ReadingByStationIdCommandResponse>
+    public class RainfallReadingCommand : IRequest<RainfallReadingResponse>
     {
         public int Count { get; set; }
         public string? StationId { get; set; }

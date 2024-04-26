@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.AddMediatR(cfg =>
-     cfg.RegisterServicesFromAssembly(typeof(ReadingByStationIdCommand).Assembly));
+     cfg.RegisterServicesFromAssembly(typeof(RainfallReadingCommand).Assembly));
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 builder.Services.AddHttpClient();

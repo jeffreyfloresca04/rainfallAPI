@@ -1,10 +1,13 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Rainfall.API.Application.Station.Models
+﻿namespace Rainfall.API.Application.Station.Models
 {
     public class StationReadingModel
     {
-        public string dateMeasured { get; set; }
-        public float amountMeasured { get; set; }
+        public IList<StationReadingItem> Items { get; set; }
+    }
+
+    public class StationReadingItem
+    {
+        public string Datetime { get; set; }
+        public float Value { get; set; }
     }
 }

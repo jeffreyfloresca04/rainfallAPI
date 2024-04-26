@@ -15,7 +15,7 @@ namespace TestProject1
         {
             var services = new ServiceCollection();
             var serviceProvider = services
-                                    .AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(ReadingByStationIdCommand).Assembly))
+                                    .AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(RainfallReadingCommand).Assembly))
                                     .AddHttpClient().
                                     AddTransient<IConfiguration>(sp =>
                                     {
@@ -27,7 +27,7 @@ namespace TestProject1
 
             var mediator = serviceProvider.GetRequiredService<IMediator>();
 
-            var query = new ReadingByStationIdCommand()
+            var query = new RainfallReadingCommand()
                 {
                     StationId = "5000",
                     Count = 10
@@ -35,7 +35,9 @@ namespace TestProject1
 
             var response = await mediator.Send(query);
 
-            Assert.True(response.readings.Count > 0);
+            Assert.True(response.Readings.Count > 0);;
+            Assert.True(response.Readings[0].AmountMeasured == 4.154f);
+            Assert.True(response.Readings[0].DateMeasured == "2024-04-25T14:30:00Z");
         }
 
 
@@ -44,7 +46,7 @@ namespace TestProject1
         {
             var services = new ServiceCollection();
             var serviceProvider = services
-                                    .AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(ReadingByStationIdCommand).Assembly))
+                                    .AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(RainfallReadingCommand).Assembly))
                                     .AddHttpClient().
                                     AddTransient<IConfiguration>(sp =>
                                     {
@@ -56,7 +58,7 @@ namespace TestProject1
 
             var mediator = serviceProvider.GetRequiredService<IMediator>();
 
-            var query = new ReadingByStationIdCommand()
+            var query = new RainfallReadingCommand()
             {
                 StationId = "500000",
                 Count = 10
@@ -64,7 +66,7 @@ namespace TestProject1
 
             var ex = await Assert.ThrowsAsync<CustomException>(() => mediator.Send(query));
 
-            Assert.True(ex.code == 404);
+            Assert.True(ex.ErrorCode == 404);
         }
     }
 }

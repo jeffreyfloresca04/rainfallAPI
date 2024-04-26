@@ -4,11 +4,18 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Application\Station\Queries\" />
-    <Folder Include="Domain\" />
+    <Compile Remove="Application\Station\Queries\**" />
+    <Compile Remove="Domain\**" />
+    <Content Remove="Application\Station\Queries\**" />
+    <Content Remove="Domain\**" />
+    <EmbeddedResource Remove="Application\Station\Queries\**" />
+    <EmbeddedResource Remove="Domain\**" />
+    <None Remove="Application\Station\Queries\**" />
+    <None Remove="Domain\**" />
   </ItemGroup>
 
   <ItemGroup>

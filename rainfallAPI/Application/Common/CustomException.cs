@@ -1,11 +1,16 @@
 ﻿namespace Rainfall.API.Application.Common
 {
+    /// <summary>
+    /// Custom Exception
+    /// </summary>
     public class CustomException : Exception
     {
-        public int code { get; set; }
-        public CustomException(int code) : base()
+        public int ErrorCode { get; private set; }
+        public string Message { get; private set; }
+        public CustomException(int errorCode, string message) : base()
         {
-            this.code = code;
+            this.ErrorCode = errorCode;
+            this.Message = message;
         }
     }
 }

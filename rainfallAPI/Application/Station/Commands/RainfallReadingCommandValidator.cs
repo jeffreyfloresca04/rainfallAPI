@@ -2,9 +2,9 @@
 
 namespace Rainfall.API.Application.Station.Commands
 {
-    public class ReadingByStationIdCommandValidator : AbstractValidator<ReadingByStationIdCommand>
+    public class RainfallReadingCommandValidator : AbstractValidator<RainfallReadingCommand>
     {
-        public ReadingByStationIdCommandValidator()
+        public RainfallReadingCommandValidator()
         {
             RuleFor(v => v.StationId)
                  .NotNull();
