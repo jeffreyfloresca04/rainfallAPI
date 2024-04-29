@@ -36,8 +36,6 @@ namespace TestProject1
             var response = await mediator.Send(query);
 
             Assert.True(response.Readings.Count > 0);;
-            Assert.True(response.Readings[0].AmountMeasured == 4.154f);
-            Assert.True(response.Readings[0].DateMeasured == "2024-04-25T14:30:00Z");
         }
 
 

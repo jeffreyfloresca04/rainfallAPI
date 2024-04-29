@@ -5,6 +5,7 @@ using Rainfall.API.Application.Common;
 using Rainfall.API.Application.Station.Commands;
 using Rainfall.API.Application.Station.Models;
 using System.Net.Mime;
+using System.Runtime.ConstrainedExecution;
 
 namespace Rainfall.API.Application.Controllers
 {
@@ -25,6 +26,10 @@ namespace Rainfall.API.Application.Controllers
         /// <param name="stationId">The id of the reading station</param>
         /// <param name="count">The number of readings to return</param>
         /// <returns> Retrieve the latest readings for the specified stationId</returns>
+        /// <response code="200">A list of rainfall readings successfully retrieved</response>
+        /// <response code="400">Invalid Request</response>
+        /// <response code="404">No readings found for the specified stationId</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("/rainfall/id/{stationId}/readings", Name ="get-rainfall")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RainfallReadingResponse))]
@@ -48,11 +53,11 @@ namespace Rainfall.API.Application.Controllers
             }
             catch(ValidationException vex)
             {
-                return BadRequest(new ErrorResponse
-                {
-                    Message = vex.Message,
-                    Detail = vex.Errors.Select(x => new ErrorDetail(x.PropertyName, x.ErrorMessage)).ToList()
-                });
+                return StatusCode(StatusCodes.Status400BadRequest, new ErrorResponse
+                (
+                 vex.Message,
+                 vex.Errors.Select(x => new ErrorDetail(x.PropertyName, x.ErrorMessage)).ToList()
+                ));
             }
             catch(CustomException cex)
             {
@@ -61,29 +66,32 @@ namespace Rainfall.API.Application.Controllers
                 {
                     case StatusCodes.Status500InternalServerError:
                         return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse
-                        {
-                            Message = cex.Message
-                        });
+                        (
+                          cex.Message
+                        ));
+
                     case StatusCodes.Status400BadRequest:
                         return StatusCode(StatusCodes.Status400BadRequest, new ErrorResponse
-                        {
-                            Message = cex.Message
-                        });
+                        (
+                          cex.Message
+                        ));
 
                     case StatusCodes.Status404NotFound:
                         return StatusCode(StatusCodes.Status404NotFound, new ErrorResponse
-                        {
-                            Message = cex.Message
-                        });
+                        (
+                          cex.Message
+                        ));
+
                 }
                 return BadRequest(cex);
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse
-                {
-                    Message = ex.Message
-                });
+                        (
+                          ex.Message
+                        ));
+
             }
         }
     }

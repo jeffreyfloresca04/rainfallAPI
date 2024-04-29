@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace Rainfall.API.Application.Station.Commands
 {
     /// <summary>
-    /// Get rainfall readings response
+    /// Details of a rainfall reading
     /// </summary>
     public class RainfallReadingResponse
     {

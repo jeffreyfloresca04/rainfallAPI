@@ -3,15 +3,22 @@
     /// <summary>
     ///  Details of invalid request property
     /// </summary>
-    public class ErrorDetail
+    public class ErrorDetail : BaseError
     {
-        public string message { get; private set; }
+        /// <summary>
+        /// Name of propery
+        /// </summary>
         public string propertyName { get; private set; }
 
-        public ErrorDetail(string propertyName, string message)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="propertyName"></param>
+        /// <param name="message"></param>
+        public ErrorDetail(string propertyName, string message) : base(message)
         {
-            this.message = message;
             this.propertyName = propertyName;
         }
     }
+
 }
